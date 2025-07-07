@@ -1,29 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreService {
-  final CollectionReference notesCollection =
-  FirebaseFirestore.instance.collection('notes');
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Add Note
-  Future<void> addNote(String title, String content) async {
-    await notesCollection.add({
+  CollectionReference getUserNotesCollection(String uid) {
+    return _firestore.collection('users').doc(uid).collection('notes');
+  }
+
+  Future<void> addNote(String uid, String title, String content) async {
+    await getUserNotesCollection(uid).add({
       'title': title,
       'content': content,
       'timestamp': FieldValue.serverTimestamp(),
     });
   }
 
-  // ✅ Update Note
-  Future<void> updateNote(String noteId, String newTitle, String newContent) async {
-    await notesCollection.doc(noteId).update({
-      'title': newTitle,
-      'content': newContent,
+  Future<void> updateNote(String uid, String noteId, String title, String content) async {
+    await getUserNotesCollection(uid).doc(noteId).update({
+      'title': title,
+      'content': content,
       'timestamp': FieldValue.serverTimestamp(),
     });
   }
 
-  // ✅ Delete Note
-  Future<void> deleteNote(String noteId) async {
-    await notesCollection.doc(noteId).delete();
+  Future<void> deleteNote(String uid, String noteId) async {
+    await getUserNotesCollection(uid).doc(noteId).delete();
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../core/services/firestore_service.dart';
 
 class NoteProvider with ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
+
   String title = '';
   String content = '';
 
@@ -22,21 +24,21 @@ class NoteProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Save Note
   Future<void> saveNote(String title, String content) async {
-    await _firestoreService.addNote(title, content);
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    await _firestoreService.addNote(uid, title, content);
     notifyListeners();
   }
 
-  // Update Note
   Future<void> updateNote(String noteId, String title, String content) async {
-    await _firestoreService.updateNote(noteId, title, content);
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    await _firestoreService.updateNote(uid, noteId, title, content);
     notifyListeners();
   }
 
-  // Delete Note
   Future<void> deleteNote(String noteId) async {
-    await _firestoreService.deleteNote(noteId);
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    await _firestoreService.deleteNote(uid, noteId);
     notifyListeners();
   }
 }
